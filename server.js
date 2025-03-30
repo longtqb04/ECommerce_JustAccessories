@@ -43,7 +43,19 @@ app.get('/api/products/count', async (req, res) => {
     }
 });
 
-// Start the Server
+
+app.get('/api/products/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        res.json(product);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch product' });
+    }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
