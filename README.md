@@ -1,6 +1,6 @@
 # JustAccessories
 
-An e-commerce website selling electronic accessories, including a system to provide customers tailored recommendations based on their user data.
+An e-commerce website selling electronic accessories.
 
 Implemented as the assignment for Electronic Commerce (CO3027) course in Ho Chi Minh City University of Technology - VNU-HCM (HCMUT), Semester 242.
 
