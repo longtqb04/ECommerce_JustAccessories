@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://tranquocbaolong2004:tranquocbaolong2004@justaccessories.qhm1ufh.mongodb.net/', {
+mongoose.connect('mongodb+srv://tranquocbaolong2004:nartkram04@justaccessories.qhm1ufh.mongodb.net/JustAccessories?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
@@ -20,18 +20,26 @@ const productSchema = new mongoose.Schema({
     disprice: Number,
     details: String,
     spec: String,
-    image: String,
+    imageurl: String,
 });
 
 const Product = mongoose.model('Product', productSchema);
 
-// API Endpoint to Fetch Products
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
         res.json(products);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch products' });
+    }
+});
+
+app.get('/api/products/count', async (req, res) => {
+    try {
+        const count = await Product.countDocuments();
+        res.json({ count });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to count products' });
     }
 });
 
