@@ -14,6 +14,7 @@ mongoose.connect('mongodb+srv://tranquocbaolong2004:nartkram04@justaccessories.q
 
 // Define Product Schema
 const productSchema = new mongoose.Schema({
+    _id: String,
     name: String,
     category: String,
     price: Number,

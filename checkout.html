@@ -258,33 +258,21 @@
                 <div class="bg-light p-30 mb-5">
                     <div class="border-bottom">
                         <h6 class="mb-3">Sản phẩm</h6>
-                        <div class="d-flex justify-content-between">
-                            <p>Product Name 1</p>
-                            <p>$150</p>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Product Name 2</p>
-                            <p>$150</p>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Product Name 3</p>
-                            <p>$150</p>
-                        </div>
                     </div>
                     <div class="border-bottom pt-3 pb-2">
                         <div class="d-flex justify-content-between mb-3">
                             <h6>Thành tiền</h6>
-                            <h6>$150</h6>
+                            <h6>0 đ</h6>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h6 class="font-weight-medium">Phí vận chuyển</h6>
-                            <h6 class="font-weight-medium">$10</h6>
+                            <h6 class="font-weight-medium">0 đ</h6>
                         </div>
                     </div>
                     <div class="pt-2">
                         <div class="d-flex justify-content-between mt-2">
                             <h5>Tổng cộng</h5>
-                            <h5>$160</h5>
+                            <h5>0 đ</h5>
                         </div>
                     </div>
                 </div>
@@ -293,17 +281,17 @@
                     <div class="bg-light p-30">
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="paypal">
-                                <label class="custom-control-label" for="paypal">Tiền mặt</label>
+                                <input type="radio" class="custom-control-input" name="payment" id="cash">
+                                <label class="custom-control-label" for="cash">Tiền mặt</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="directcheck">
-                                <label class="custom-control-label" for="directcheck">Momo</label>
+                                <input type="radio" class="custom-control-input" name="payment" id="momo">
+                                <label class="custom-control-label" for="momo">Momo</label>
                             </div>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold py-3">Đặt hàng</button>
+                        <button class="btn btn-block btn-primary font-weight-bold py-3" data-toggle="modal" data-target="#successModal">Đặt hàng</button>
                     </div>
                 </div>
             </div>
@@ -381,6 +369,27 @@
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
+    <!-- Modal Đặt hàng thành công -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutModalLabel">Thông báo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Đặt hàng thành công!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="resetCart(); window.location.href='index.html';">OK</button>
+            </div>
+            </div>
+        </div>
+        </div>
+    
+
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -394,6 +403,52 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <!-- Total -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const productListContainer = document.querySelector('.bg-light .border-bottom');
+            const subtotalElement = document.querySelector('.border-bottom.pt-3.pb-2 .d-flex.justify-content-between.mb-3 h6:nth-child(2)');
+            const shippingElement = document.querySelector('.border-bottom.pt-3.pb-2 .d-flex.justify-content-between:nth-child(2) h6:nth-child(2)');
+            const totalElement = document.querySelector('.pt-2 .d-flex.justify-content-between.mt-2 h5:nth-child(2)');
+    
+            if (cart.length === 0) {
+                subtotalElement.textContent = '0 đ';
+                shippingElement.textContent = '0 đ';
+                totalElement.textContent = '0 đ';
+                return;
+            }
+    
+            let subtotal = 0;
+            let productHTML = '<h6 class="mb-3">Sản phẩm</h6>';
+    
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+    
+                productHTML += `
+                    <div class="d-flex justify-content-between">
+                        <p>${item.name}</p>
+                        <p>${itemTotal} đ</p>
+                    </div>
+                `;
+            });
+    
+            productListContainer.innerHTML = productHTML;
+    
+            const shippingCost = Math.round(subtotal * 0.1);
+            const total = subtotal + shippingCost;
+    
+            subtotalElement.textContent = `${subtotal} đ`;
+            shippingElement.textContent = `${shippingCost} đ`;
+            totalElement.textContent = `${total} đ`;
+        });
+
+        function resetCart() {
+            localStorage.removeItem('cart');
+        }
+    </script>
 </body>
 
 </html>
