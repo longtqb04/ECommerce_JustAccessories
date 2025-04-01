@@ -59,10 +59,11 @@ app.get('/api/products/:id', async (req, res) => {
 
 app.get('/api/products/search', async (req, res) => {
     try {
-        const query = req.query.q;
-        const products = await Product.find({
-            name: { $regex: query, $options: 'i' } 
-        });
+        const searchQuery = req.query.q;
+        if (!searchQuery) {
+            return res.status(400).json({ error: 'Search query is required' });
+        }
+        const products = await Product.find({ name: { $regex: searchQuery, $options: 'i' } });
         res.json(products);
     } catch (err) {
         res.status(500).json({ error: 'Failed to search products' });
