@@ -1,34 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
+    const productCode = urlParams.get('code');
+    console.log('Product Code:', productCode);
 
-    if (!productId) {
-        document.getElementById('product-details').innerHTML = '<p>Product not found.</p>';
-        return;
-    }
-
-    fetch(`http://localhost:5000/api/products/${productId}`)
-        .then(response => response.json())
+    fetch(`http://localhost:5000/api/products/code/${productCode}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch product details');
+            }
+            return response.json();
+        })
         .then(product => {
-            const productDetailsHTML = `
-                <div class="col-lg-6">
-                    <img class="img-fluid" src="${product.imageurl}" alt="${product.name}">
-                </div>
-                <div class="col-lg-6">
-                    <h1>${product.name}</h1>
-                    <h4>${product.price}đ</h4>
-                    ${product.disprice > 0 ? `<h6 class="text-muted"><del>${product.disprice} đ</del></h6>` : ''}
-                    <p>${product.details}</p>
-                    <ul>
-                        <li>${product.spec}</li>
-                    </ul>
-                    <button class="btn btn-primary">Add to Cart</button>
-                </div>
-            `;
-            document.getElementById('product-details').innerHTML = productDetailsHTML;
+            console.log('Fetched Product:', product);
+            document.getElementById('product-image').src = product.imageurl;
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-disprice').textContent = `${product.disprice > 0 ? product.disprice : product.price} đ`;
+            document.getElementById('product-price').textContent = product.disprice > 0 ? `${product.price} đ` : '';
+            document.getElementById('product-details').textContent = product.details;
+            document.getElementById('product-spec').textContent = product.spec;
+
+            const addToCartButton = document.querySelector('.btn-primary.px-3');
+            addToCartButton.addEventListener('click', () => {
+                addToCart(product);
+            });
         })
         .catch(error => {
             console.error('Error fetching product details:', error);
-            document.getElementById('product-details').innerHTML = '<p>Failed to load product details.</p>';
+            alert('Failed to load product details.');
         });
 });

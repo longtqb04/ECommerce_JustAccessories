@@ -22,6 +22,7 @@ const productSchema = new mongoose.Schema({
     details: String,
     spec: String,
     imageurl: String,
+    code: Number,
 });
 
 const Product = mongoose.model('Product', productSchema);
@@ -45,9 +46,9 @@ app.get('/api/products/count', async (req, res) => {
 });
 
 
-app.get('/api/products/:id', async (req, res) => {
+app.get('/api/products/code/:code', async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findOne({ code: req.params.code });
         if (!product) {
             return res.status(404).json({ error: 'Product not found' });
         }

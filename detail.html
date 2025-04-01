@@ -533,14 +533,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
+            const productCode = urlParams.get('code');
 
-            if (!productId) {
+            if (!productCode) {
                 alert('Product not found!');
                 return;
             }
 
-            fetch(`http://localhost:5000/api/products/${productId}`)
+            fetch(`http://localhost:5000/api/products/code/${productCode}`)
                 .then(response => response.json())
                 .then(product => {
                     document.getElementById('product-image').src = product.imageurl;
