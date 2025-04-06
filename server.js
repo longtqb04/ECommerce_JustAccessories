@@ -58,16 +58,36 @@ app.get('/api/products/code/:code', async (req, res) => {
     }
 });
 
-app.get('/api/products/search', async (req, res) => {
+app.get('/api/products/search/:q', async (req, res) => {
     try {
-        const searchQuery = req.query.q;
+        const searchQuery = req.params.q;
+        
         if (!searchQuery) {
             return res.status(400).json({ error: 'Search query is required' });
         }
+        
         const products = await Product.find({ name: { $regex: searchQuery, $options: 'i' } });
+        
         res.json(products);
     } catch (err) {
         res.status(500).json({ error: 'Failed to search products' });
+    }
+});
+
+app.get('/api/products/recommend/:code', async (req, res) => {
+    try {
+        const product = await Product.findOne({ code: req.params.code });
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        const recommendedProducts = await Product.find({
+            category: product.category,
+        });
+
+        res.json(recommendedProducts);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch recommendations' });
     }
 });
 

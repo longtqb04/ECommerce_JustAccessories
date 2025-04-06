@@ -152,8 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const searchinput = urlParams.get('q');
 
-    // Fetch products from the backend
-    fetch('http://localhost:5000/api/search')
+    fetch(`http://localhost:5000/api/products/search/${searchinput}`)
         .then(response => response.json())
         .then(products => {
             products.forEach(product => {
@@ -166,11 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
                                     <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
-                                    <a class="btn btn-outline-dark btn-square" href="detail.html?id=${product._id}"><i class="fa fa-search"></i></a>
+                                    <a class="btn btn-outline-dark btn-square" href="detail.html?code=${product.code}"><i class="fa fa-search"></i></a>
                                 </div>
                             </div>
                             <div class="text-center py-4">
-                                <a class="h6 text-decoration-none text-truncate" href="detail.html?id=${product._id}">${product.name}</a>
+                                <a class="h6 text-decoration-none text-truncate" href="detail.html?code=${product.code}">${product.name}</a>
                                 <div class="d-flex align-items-center justify-content-center mt-2">
                                     <h5>${product.disprice > 0 ? product.disprice : product.price}đ</h5>
                                     ${product.disprice > 0 ? `<h6 class="text-muted ml-2"><del>${product.price}đ</del></h6>` : ''}
@@ -193,3 +192,68 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error fetching products:', error));
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productCode = urlParams.get('code');
+    const recommendationsContainer = document.getElementById('recommendations');
+
+    fetch(`http://localhost:5000/api/products/recommend/${productCode}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch recommendations');
+            }
+            return response.json();
+        })
+        .then(recommendedProducts => {
+            let recommendationsHTML = '';
+
+            recommendedProducts.forEach(product => {
+                recommendationsHTML += `
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="${product.imageurl}" alt="${product.name}">
+                            <div class="product-action">
+                                <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href="detail.html?code=${product.code}"><i class="fa fa-search"></i></a>
+                            </div>
+                        </div>
+                        <div class="text-center py-4">
+                            <a class="h6 text-decoration-none text-truncate" href="detail.html?code=${product.code}">${product.name}</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>${product.price}đ</h5>
+                                ${product.disprice > 0 ? `<h6 class="text-muted ml-2"><del>${product.price}đ</del></h6>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            recommendationsContainer.innerHTML = recommendationsHTML;
+            $('.related-carousel').owlCarousel({
+                loop: true,
+                margin: 29,
+                nav: false,
+                autoplay: true,
+                smartSpeed: 1000,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    576: {
+                        items: 2
+                    },
+                    768: {
+                        items: 3
+                    },
+                    992: {
+                        items: 4
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching recommendations:', error);
+        });
+});
