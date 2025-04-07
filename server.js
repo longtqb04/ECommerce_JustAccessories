@@ -25,6 +25,17 @@ const productSchema = new mongoose.Schema({
     code: Number,
 });
 
+const reviewSchema = new mongoose.Schema({
+    productCode: Number,
+    username: String,
+    email: String,
+    rating: Number,
+    comment: String,
+    date: { type: Date, default: Date.now },
+});
+
+const Review = mongoose.model('Review', reviewSchema);
+
 const Product = mongoose.model('Product', productSchema);
 
 app.get('/api/products', async (req, res) => {
@@ -88,6 +99,41 @@ app.get('/api/products/recommend/:code', async (req, res) => {
         res.json(recommendedProducts);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch recommendations' });
+    }
+});
+
+app.get('/api/reviews/all', async (req, res) => {
+    try {
+        const reviews = await Review.find();
+        res.json(reviews);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch reviews' });
+    }
+});
+
+
+app.get('/api/reviews/:productCode', async (req, res) => {
+    try {
+        const reviews = await Review.find({ productCode: req.params.productCode });
+        res.json(reviews);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch reviews' });
+    }
+});
+
+app.post('/api/reviews', async (req, res) => {
+    try {
+        const { productCode, username, rating, comment } = req.body;
+
+        if (!productCode || !username || !rating || !comment) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const newReview = new Review({ productCode, username, rating, comment });
+        await newReview.save();
+        res.status(201).json(newReview);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to add review' });
     }
 });
 

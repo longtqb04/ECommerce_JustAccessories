@@ -257,3 +257,87 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching recommendations:', error);
         });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productCode = urlParams.get('code');
+    const reviewsContainer = document.getElementById('reviews-container');
+
+    fetch(`http://localhost:5000/api/reviews/${productCode}`)
+        .then(response => response.json())
+        .then(reviews => {
+            if (reviews.length === 0) {
+                reviewsContainer.innerHTML = '<p>Chưa có đánh giá nào cho sản phẩm này.</p>';
+                return;
+            }
+
+            let reviewsHTML = '';
+            reviews.forEach(review => {
+                reviewsHTML += `
+                    <div class="media mb-4">
+                        <img src="img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                        <div class="media-body">
+                            <h6>${review.username}<small> - <i>${new Date(review.date).toLocaleDateString()}</i></small></h6>
+                            <div class="text-primary mb-2">
+                                ${'<i class="fas fa-star"></i>'.repeat(review.rating)}${'<i class="far fa-star"></i>'.repeat(5 - review.rating)}
+                            </div>
+                            <p>${review.comment}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            reviewsContainer.innerHTML = reviewsHTML;
+        })
+        .catch(error => {
+            console.error('Error fetching reviews:', error);
+            reviewsContainer.innerHTML = '<p>Failed to load reviews.</p>';
+        });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const productCount = document.querySelectorAll('.productCount.badge.border.font-weight-normal');
+    fetch('http://localhost:5000/api/products/count')
+        .then(response => response.json())
+        .then(data => {
+            productCount.forEach(element => {
+                element.textContent = data.count;
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching product count:', error);
+            productCount.forEach(element => {
+                element.textContent = '0';
+            });
+        });
+});
+
+document.getElementById('reviewForm').addEventListener('submit', event => {
+    event.preventDefault();
+
+    const productCode = new URLSearchParams(window.location.search).get('code');
+    const username = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const rating = parseInt(document.getElementById('rating').value, 10);
+    const comment = document.getElementById('message').value;
+
+    fetch('http://localhost:5000/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productCode, username, email, rating, comment }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to submit review');
+            }
+            return response.json();
+        })
+        .then(newReview => {
+            alert('Thêm đánh giá thành công!');
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error submitting review:', error);
+            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+        });
+});

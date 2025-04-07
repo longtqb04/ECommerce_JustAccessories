@@ -252,8 +252,8 @@
                         </div>
                         <div class="tab-pane fade" id="tab-pane-3">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <h4 class="mb-4">1 đánh giá</h4>
+                                <div id="reviews-container" class="col-md-6">
+                                    <h4 class="mb-4">Đánh giá</h4>
                                     <div class="media mb-4">
                                         <img src="img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
                                         <div class="media-body">
@@ -272,28 +272,28 @@
                                 <div class="col-md-6">
                                     <h4 class="mb-4">Thêm đánh giá</h4>
                                     <small>Email của bạn không được xuất bản. Các trường bắt buộc được đánh dấu *</small>
-                                    <div class="d-flex my-3">
-                                        <p class="mb-0 mr-2">Đánh giá * :</p>
-                                        <div class="text-primary">
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
+                                    <form id="reviewForm">
+                                        <div class="form-group">
+                                            <label for="rating">Đánh giá *</label>
+                                            <select id="rating" class="form-control" required>
+                                                <option value="5">✯ ✯ ✯ ✯ ✯</option>
+                                                <option value="4">✯ ✯ ✯ ✯</option>
+                                                <option value="3">✯ ✯ ✯</option>
+                                                <option value="2">✯ ✯</option>
+                                                <option value="1">✯</option>
+                                            </select>
                                         </div>
-                                    </div>
-                                    <form>
                                         <div class="form-group">
                                             <label for="message">Bình luận *</label>
-                                            <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
+                                            <textarea id="message" cols="30" rows="5" class="form-control" required></textarea>
                                         </div>
                                         <div class="form-group">
                                             <label for="name">Họ và tên *</label>
-                                            <input type="text" class="form-control" id="name">
+                                            <input type="text" class="form-control" id="name" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="email">Email *</label>
-                                            <input type="email" class="form-control" id="email">
+                                            <input type="email" class="form-control" id="email" required>
                                         </div>
                                         <div class="form-group mb-0">
                                             <input type="submit" value="GỬI ĐÁNH GIÁ" class="btn btn-primary px-3">
@@ -308,7 +308,6 @@
         </div>
     </div>
     <!-- Shop Detail End -->
-
 
     <!-- Products Start -->
     <div class="container-fluid py-5">
