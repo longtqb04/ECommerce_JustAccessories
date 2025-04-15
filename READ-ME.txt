@@ -9,3 +9,8 @@
   =>  Author Website   : https://htmlcodex.com
 
   =>  About HTML Codex : HTML Codex is one of the top creators and publishers of Free HTML templates, HTML landing pages, HTML email templates and HTML snippets in the world. Read more at ( https://htmlcodex.com/about-us )
+
+Cách chạy:
+1. Cài Node.js và chạy Vite trên VSCode
+2. Thực thi lệnh node server.js
+3. Chạy trang chính (index.html)
