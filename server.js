@@ -65,7 +65,14 @@ const orderSchema = new mongoose.Schema({
             city: String
         }
     },
-    orderItems: String, // JSON string of cart items
+    orderItems: [{
+        productId: String,
+        productCode: String,
+        productName: String,
+        quantity: Number,
+        price: Number,
+        subtotal: Number
+    }],
     paymentDetails: {
         method: String,
         subtotal: Number,
@@ -220,8 +227,8 @@ app.post('/api/orders', async (req, res) => {
 
 app.get('/api/orders/all', async (req, res) => {
     try {
-        const products = await Order.find();
-        res.json(products);
+        const orders = await Order.find();
+        res.json(orders);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch orders' });
     }

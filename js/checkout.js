@@ -45,7 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = {
             billingDetails,
             shippingDetails: shipToDifferent ? shippingDetails : billingDetails,
-            orderItems: JSON.stringify(cart),
+            orderItems: cart.map(item => ({
+                productId: item.id,
+                productCode: item.code,
+                productName: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                subtotal: item.price * item.quantity
+            })),
             paymentDetails: {
                 method: paymentMethod,
                 subtotal,
