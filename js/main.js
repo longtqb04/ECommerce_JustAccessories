@@ -341,3 +341,32 @@ document.getElementById('reviewForm').addEventListener('submit', event => {
             alert('Có lỗi xảy ra. Vui lòng thử lại.');
         });
 });
+
+document.getElementById('contactForm').addEventListener('submit', event => {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+
+    fetch('http://localhost:5000/api/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to submit contact');
+            }
+            return response.json();
+        })
+        .then(newContact => {
+            alert('Thêm liên hệ thành công!');
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error submitting contact:', error);
+            alert('Có lỗi xảy ra. Vui lòng thử lại.');
+        });
+});
