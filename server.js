@@ -144,9 +144,15 @@ app.get('/api/products/recommend/:code', async (req, res) => {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        const recommendedProducts = await Product.find({
-            category: product.category,
-        });
+        const recommendedProducts = await Product.aggregate([
+            { 
+                $match: { 
+                    category: product.category,
+                    code: { $ne: product.code } 
+                }
+            },
+            { $sample: { size: 4 } }
+        ]);
 
         res.json(recommendedProducts);
     } catch (err) {
@@ -237,4 +243,29 @@ app.get('/api/orders/all', async (req, res) => {
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});
+
+app.get('/api/products/filter', async (req, res) => {
+    try {
+        const query = {};
+
+        if (req.query.minPrice || req.query.maxPrice) {
+            query.price = {};
+            if (req.query.minPrice) query.price.$gte = parseInt(req.query.minPrice);
+            if (req.query.maxPrice) query.price.$lte = parseInt(req.query.maxPrice);
+        }
+
+        if (req.query.category) {
+            const categories = Array.isArray(req.query.category) 
+                ? req.query.category 
+                : [req.query.category];
+            query.category = { $in: categories };
+        }
+
+        const products = await Product.find(query);
+        res.json(products);
+    } catch (err) {
+        console.error('Error filtering products:', err);
+        res.status(500).json({ error: 'Failed to filter products' });
+    }
 });
